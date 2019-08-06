@@ -2,6 +2,21 @@
 	let style = document.createElement('style');
 	style.textContent = 'for ' + document.currentScript.getAttribute('src');
 	document.head.appendChild(style);
+	`
+		tab-select {
+			display: block;
+		}
+
+		tab-content {
+			display: block;
+		}
+
+		tab-content:not([selected]) {
+			display: none;
+		}
+	`.split(/(?<=\})\n/)
+		.filter(e => !/^\s*$/.test(e))
+		.forEach(rule => style.sheet.insertRule(rule));
 
 	class TabElement extends HTMLElement {
 		get content() {
@@ -74,19 +89,6 @@
 	customElements.define('tab-group', class extends TabElement {});
 
 	customElements.define('tab-select', class extends TabElement {
-		constructor() {
-			super()
-			if (!this.constructor.style) {
-				style.sheet.insertRule(`
-					tab-select {
-						display: block;
-					}
-				`);
-
-				this.constructor.style = true;
-			}
-		}
-
 		connectedCallback(){
 			this.addEventListener('click', function(){
 				if (!this.selected) {
@@ -117,29 +119,5 @@
 		}
 	});
 
-	customElements.define('tab-content', class extends TabElement {
-		constructor() {
-			super()
-			if (!this.constructor.style) {
-				[
-					`
-						tab-content {
-							display: block;
-						}
-					`,
-					`
-						tab-content:not([selected]) {
-							display: none;
-						}
-					`
-				].forEach(rule => style.sheet.insertRule(rule));
-				this.constructor.style = true;
-			}
-		}
-
-		connectedCallback(){
-			this.content = this.getAttribute('content'),
-			this.selected = this.getAttribute('selected') === '' ? true : false;
-		}
-	});
+	customElements.define('tab-content', class extends TabElement {});
 })();
