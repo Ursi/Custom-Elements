@@ -91,22 +91,7 @@
 	customElements.define('tab-select', class extends TabElement {
 		connectedCallback(){
 			this.addEventListener('click', function(){
-				if (!this.selected) {
-					['tabs', 'content'].forEach(tabType => {
-						for (let elem of this.group[tabType]) {
-							if (elem.selected) {
-								elem.selected = false;
-								break;
-							}
-						}
-					});
-
-					this.selected = true;
-					let content = this.contentElement;
-					if (content) {
-						content.selected = true;
-					}
-				}
+				if (!this.selected) this.select();
 			});
 		}
 
@@ -115,6 +100,23 @@
 				if (tabContent.content === this.content) {
 					return tabContent
 				}
+			}
+		}
+
+		select() {
+			['tabs', 'content'].forEach(tabType => {
+				for (let elem of this.group[tabType]) {
+					if (elem.selected) {
+						elem.selected = false;
+						break;
+					}
+				}
+			});
+
+			this.selected = true;
+			let content = this.contentElement;
+			if (content) {
+				content.selected = true;
 			}
 		}
 	});
