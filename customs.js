@@ -3,14 +3,6 @@
 	style.textContent = 'for ' + document.currentScript.getAttribute('src');
 	document.head.appendChild(style);
 	`
-		tab-select {
-			display: block;
-		}
-
-		tab-content {
-			display: block;
-		}
-
 		tab-content:not([selected]) {
 			display: none;
 		}
