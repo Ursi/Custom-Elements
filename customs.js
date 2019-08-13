@@ -89,12 +89,15 @@
 			});
 		}
 
-		get contentElement() {
+		get contentElements() {
+			let content = [];
 			for (let tabContent of this.group.content) {
 				if (tabContent.content === this.content) {
-					return tabContent
+					content.push(tabContent);
 				}
 			}
+
+			return content;
 		}
 
 		select() {
@@ -102,15 +105,15 @@
 				for (let elem of this.group[tabType]) {
 					if (elem.selected) {
 						elem.selected = false;
-						break;
+						if(tabType == 'tabs') break;
 					}
 				}
 			});
 
 			this.selected = true;
-			let content = this.contentElement;
-			if (content) {
-				content.selected = true;
+			let content = this.contentElements;
+			if (content.length) {
+				for (let elem of content) elem.selected = true;
 			}
 		}
 	});
