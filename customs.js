@@ -2,13 +2,15 @@
 	let style = document.createElement('style');
 	style.textContent = 'for ' + document.currentScript.getAttribute('src');
 	document.head.appendChild(style);
-	`
+	style.sheet.insertRule(`
 		tab-content:not([selected]) {
 			display: none;
 		}
-	`.split(/(?<=\})\n/)
-		.filter(e => !/^\s*$/.test(e))
-		.forEach(rule => style.sheet.insertRule(rule));
+	`);
+
+	/*.split(/(?<=\})\n/)
+		.filter(str => !/^\s*$/.test(str))
+		.forEach(rule => style.sheet.insertRule(rule));*/
 
 	class TabElement extends HTMLElement {
 		get content() {
