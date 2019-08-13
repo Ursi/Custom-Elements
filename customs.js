@@ -107,7 +107,7 @@
 				for (let elem of this.group[tabType]) {
 					if (elem.selected) {
 						elem.selected = false;
-						if(tabType == 'tabs') break;
+						if (tabType === 'tabs') break;
 					}
 				}
 			});
