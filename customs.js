@@ -125,4 +125,10 @@
 	});
 
 	customElements.define('tab-content', class extends TabElement {});
+
+	window.addEventListener('DOMContentLoaded', function(){
+		for (let tab of document.querySelectorAll('tab-select[default]')) {
+			tab.select();
+		}
+	});
 })();
