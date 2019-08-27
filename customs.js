@@ -7,6 +7,10 @@
 			display: contents;
 		}
 
+		tab-select {
+			cursor: default;
+		}
+
 		tab-content:not([selected]) {
 			display: none;
 		}
