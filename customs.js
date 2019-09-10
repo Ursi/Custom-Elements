@@ -6,17 +6,15 @@
 		tab-group {
 			display: contents;
 		}
-
+	|
 		tab-select {
 			cursor: default;
 		}
-
+	|
 		tab-content:not([selected]) {
 			display: none;
 		}
-	`.split(/(?<=\})\n/)
-		.filter(str => !/^\s*$/.test(str))
-		.forEach(rule => style.sheet.insertRule(rule));
+	`.split(`|`).forEach(rule => style.sheet.insertRule(rule));
 
 	class TabElement extends HTMLElement {
 		get content() {
