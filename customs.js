@@ -168,8 +168,7 @@
 					position: `absolute`,
 					transformOrigin: `center calc(${size} / 2)`,
 					transform: `translateX(calc((${size} - ${diskSize}) / 2)) rotate(${i / disks}turn)`,
-					animation: `disk-loader ${period}s linear infinite`,
-					animationDelay: period * (i - disks) / disks + `s`
+					animation: `${period}s linear ${period * (i - disks) / disks}s infinite disk-loader`,
 				});
 
 				this.appendChild(disk);
