@@ -1,6 +1,6 @@
 (()=>{
-	let style = document.createElement('style');
-	style.textContent = 'for ' + document.currentScript.getAttribute('src');
+	let style = document.createElement(`style`);
+	style.textContent = `for ${document.currentScript.getAttribute(`src`)}`;
 	document.head.appendChild(style);
 	`
 		tab-group {
@@ -18,29 +18,29 @@
 
 	class TabElement extends HTMLElement {
 		get content() {
-			return this.getAttribute('content');
+			return this.getAttribute(`content`);
 		}
 
 		set content(content) {
-			this.setAttribute('content', content);
+			this.setAttribute(`content`, content);
 		}
 
 		get group() {
 			return Object.defineProperties({}, {
 				name: {
 					get: ()=>{
-						let groupAttr = this.getAttribute('group');
-						return groupAttr ? groupAttr : this.parentElement.getAttribute('group');
+						let groupAttr = this.getAttribute(`group`);
+						return groupAttr ? groupAttr : this.parentElement.getAttribute(`group`);
 					},
 					set: groupName => {
-						this.setAttribute('group', groupName);
+						this.setAttribute(`group`, groupName);
 					},
 				},
 				tabs: {
 					get: ()=>{
 						let tabs = new Set;
 						for (let tabGroup of document.querySelectorAll(`tab-group[group='${this.group.name}']`)) {
-							for (let elem of tabGroup.querySelectorAll("tab-select:not([group])")) {
+							for (let elem of tabGroup.querySelectorAll(`tab-select:not([group])`)) {
 								tabs.add(elem);
 							}
 						}
@@ -56,7 +56,7 @@
 					get: ()=>{
 						let content = new Set;
 						for (let tabGroup of document.querySelectorAll(`tab-group[group='${this.group.name}']`)) {
-							for (let elem of tabGroup.querySelectorAll("tab-content:not([group])")) {
+							for (let elem of tabGroup.querySelectorAll(`tab-content:not([group])`)) {
 								content.add(elem);
 							}
 						}
@@ -72,23 +72,23 @@
 		}
 
 		get selected() {
-			return this.getAttribute('selected') === '' ? true : false;
+			return this.getAttribute(`selected`) === `` ? true : false;
 		}
 
 		set selected(bool) {
 			if (bool) {
-				this.setAttribute('selected', '');
+				this.setAttribute(`selected`, ``);
 			} else {
-				this.removeAttribute('selected');
+				this.removeAttribute(`selected`);
 			}
 		}
 	}
 
-	customElements.define('tab-group', class extends TabElement {});
+	customElements.define(`tab-group`, class extends TabElement {});
 
-	customElements.define('tab-select', class extends TabElement {
+	customElements.define(`tab-select`, class extends TabElement {
 		connectedCallback(){
-			this.addEventListener('click', function(){
+			this.addEventListener(`click`, function(){
 				if (!this.selected) this.select();
 			});
 		}
@@ -105,11 +105,11 @@
 		}
 
 		select() {
-			['tabs', 'content'].forEach(tabType => {
+			[`tabs`, `content`].forEach(tabType => {
 				for (let elem of this.group[tabType]) {
 					if (elem.selected) {
 						elem.selected = false;
-						if (tabType === 'tabs') break;
+						if (tabType === `tabs`) break;
 					}
 				}
 			});
@@ -123,7 +123,6 @@
 	});
 
 	customElements.define('tab-content', class extends TabElement {});
-
 	window.addEventListener('DOMContentLoaded', function(){
 		for (let tab of document.querySelectorAll('tab-select[default]')) {
 			tab.select();
