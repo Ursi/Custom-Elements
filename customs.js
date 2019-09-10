@@ -15,6 +15,10 @@
 			display: none;
 		}
 	|
+		disk-loader {
+			display: inline-block;
+		}
+	|
 		@keyframes disk-loader {
 			from {
 				opacity: 1;
@@ -153,7 +157,7 @@
 
 			for (let i = 0; i <= disks - 1; i++) {
 				const
-					disk = document.createElement(`span`),
+					disk = document.createElement(`div`),
 					diskSize = `calc(${1 - spacing} * ${size} / ${1 - spacing + 1 / Math.sin(Math.PI / disks)})`;
 
 				Object.assign(disk.style, {
