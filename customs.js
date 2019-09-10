@@ -14,6 +14,14 @@
 		tab-content:not([selected]) {
 			display: none;
 		}
+	|
+		@keyframes disk-loader {
+			from {
+				opacity: 1;
+			} to {
+				opacity: 0;
+			}
+		}
 	`.split(`|`).forEach(rule => style.sheet.insertRule(rule));
 
 	class TabElement extends HTMLElement {
@@ -126,6 +134,42 @@
 	window.addEventListener('DOMContentLoaded', function(){
 		for (let tab of document.querySelectorAll('tab-select[default]')) {
 			tab.select();
+		}
+	});
+
+	customElements.define(`disk-loader`, class extends HTMLElement {
+		connectedCallback(){
+			const
+				size = this.getAttribute(`size`) || `1em`,
+				disks = this.getAttribute(`disks`) || 6,
+				spacing = this.getAttribute(`spacing`) || 1 / 3,
+				color = this.getAttribute(`color`) || `#0005`,
+				period = this.getAttribute(`period`) || 1;
+
+			Object.assign(this.style, {
+				width: size,
+				height: size,
+			});
+
+			for (let i = 0; i <= disks - 1; i++) {
+				const
+					disk = document.createElement(`span`),
+					diskSize = `calc(${1 - spacing} * ${size} / ${1 - spacing + 1 / Math.sin(Math.PI / disks)})`;
+
+				Object.assign(disk.style, {
+					width: diskSize,
+					height: diskSize,
+					borderRadius: `calc(${diskSize} / 2)`,
+					background: color,
+					position: `absolute`,
+					transformOrigin: `center calc(${size} / 2)`,
+					transform: `translateX(calc((${size} - ${diskSize}) / 2)) rotate(${i / disks}turn)`,
+					animation: `disk-loader ${period}s linear infinite`,
+					animationDelay: period * (i - disks) / disks + `s`
+				});
+
+				this.appendChild(disk);
+			}
 		}
 	});
 })();
