@@ -87,7 +87,8 @@
 	customElements.define(`tab-group`, class extends TabElement {});
 
 	customElements.define(`tab-select`, class extends TabElement {
-		connectedCallback(){
+		constructor() {
+			super();
 			this.addEventListener(`click`, function(){
 				if (!this.selected) this.select();
 			});
