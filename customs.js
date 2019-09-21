@@ -14,18 +14,6 @@
 		tab-content:not([selected]) {
 			display: none;
 		}
-	`,`
-		disk-loader {
-			display: inline-block;
-		}
-	`,`
-		@keyframes disk-loader {
-			from {
-				opacity: 1;
-			} to {
-				opacity: 0;
-			}
-		}
 	`].forEach(rule => style.sheet.insertRule(rule));
 
 	class TabElement extends HTMLElement {
@@ -142,18 +130,39 @@
 	});
 
 	customElements.define(`disk-loader`, class extends HTMLElement {
-		connectedCallback(){
-			const
-				size = this.getAttribute(`size`) || `1em`,
-				disks = this.getAttribute(`disks`) || 6,
-				spacing = this.getAttribute(`spacing`) || 1 / 3,
-				color = this.getAttribute(`color`) || `#0005`,
-				period = this.getAttribute(`period`) || 1;
+		constructor() {
+			super();
+			this.attachShadow({mode: `open`});
+		}
 
-			Object.assign(this.style, {
-				width: size,
-				height: size,
-			});
+		connectedCallback() {
+			const
+				{
+					size,
+					disks,
+					spacing,
+					color,
+					period,
+					shadowRoot,
+				} = this,
+				style = document.createElement(`style`);
+
+			shadowRoot.appendChild(style);
+			[`
+				:host {
+						display: inline-block;
+						width: ${size};
+						height: ${size};
+					}
+			`,`
+				@keyframes disk-loader {
+					from {
+						opacity: 1;
+					} to {
+						opacity: 0;
+					}
+				}
+			`].forEach(rule => style.sheet.insertRule(rule));
 
 			for (let i = 0; i <= disks - 1; i++) {
 				const
@@ -171,8 +180,65 @@
 					animation: `${period}s linear ${period * (i - disks) / disks}s infinite disk-loader`,
 				});
 
-				this.appendChild(disk);
+				shadowRoot.appendChild(disk);
 			}
+		}
+
+		static get observedAttributes() {return [
+			`color`,
+			`disks`,
+			`period`,
+			`size`,
+			`spacing`,
+		];}
+
+		attributeChangedCallback(a) {
+			if (this.isConnected) {
+				const {shadowRoot} = this;
+				let child;
+				while (child = shadowRoot.firstChild) child.remove();
+				this.connectedCallback();
+			}
+		}
+
+		get color() {
+			return this.getAttribute(`color`) || `#0005`;
+		}
+
+		set color(value) {
+			this.setAttribute(`color`, value);
+		}
+
+		get disks() {
+			return this.getAttribute(`disks`) || 6;
+		}
+
+		set disks(value) {
+			this.setAttribute(`disks`, value);
+		}
+
+		get period() {
+			return this.getAttribute(`period`) || 1;
+		}
+
+		set period(value) {
+			this.setAttribute(`period`, value);
+		}
+
+		get size() {
+			return this.getAttribute(`size`) || `1em`;
+		}
+
+		set size(value) {
+			this.setAttribute(`size`, value);
+		}
+
+		get spacing() {
+			return this.getAttribute(`spacing`) || 1 / 3;
+		}
+
+		set spacing(value) {
+			this.setAttribute(`spacing`, value);
 		}
 	});
 })();
