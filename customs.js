@@ -2,23 +2,23 @@
 	let style = document.createElement(`style`);
 	style.textContent = `for ${document.currentScript.getAttribute(`src`)}`;
 	document.head.appendChild(style);
-	`
+	[`
 		tab-group {
 			display: contents;
 		}
-	|
+	`,`
 		tab-select {
 			cursor: default;
 		}
-	|
+	`,`
 		tab-content:not([selected]) {
 			display: none;
 		}
-	|
+	`,`
 		disk-loader {
 			display: inline-block;
 		}
-	|
+	`,`
 		@keyframes disk-loader {
 			from {
 				opacity: 1;
@@ -26,7 +26,7 @@
 				opacity: 0;
 			}
 		}
-	`.split(`|`).forEach(rule => style.sheet.insertRule(rule));
+	`].forEach(rule => style.sheet.insertRule(rule));
 
 	class TabElement extends HTMLElement {
 		get content() {
