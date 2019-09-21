@@ -146,16 +146,11 @@
 					period,
 					shadowRoot,
 				} = this,
-				style = document.createElement(`style`);
+				diskSize = `calc(${1 - spacing} * ${size} / ${1 - spacing + 1 / Math.sin(Math.PI / disks)})`;
 
-			shadowRoot.appendChild(style);
+			this.styleElem = document.createElement(`style`);
+			shadowRoot.appendChild(this.styleElem);
 			[`
-				:host {
-						display: inline-block;
-						width: ${size};
-						height: ${size};
-					}
-			`,`
 				@keyframes disk-loader {
 					from {
 						opacity: 1;
@@ -163,24 +158,31 @@
 						opacity: 0;
 					}
 				}
-			`].forEach(rule => style.sheet.insertRule(rule));
+			`,`
+				:host {
+					display: inline-block;
+					width: ${size};
+					height: ${size};
+				}
+			`,`
+				:host > div {
+					position: absolute;
+					width: ${diskSize};
+					height: ${diskSize};
+					border-radius: calc(${diskSize} / 2);
+					background: ${color};
+					transform-origin: center calc(${size} / 2);
+					animation: linear infinite disk-loader;
+					animation-duration: ${period}s;
+				}
+			`].forEach(rule => this.styleElem.sheet.insertRule(rule));
 
+			this.diskElems = [];
 			for (let i = 0; i <= disks - 1; i++) {
-				const
-					disk = document.createElement(`div`),
-					diskSize = `calc(${1 - spacing} * ${size} / ${1 - spacing + 1 / Math.sin(Math.PI / disks)})`;
-
-				Object.assign(disk.style, {
-					width: diskSize,
-					height: diskSize,
-					borderRadius: `calc(${diskSize} / 2)`,
-					background: color,
-					position: `absolute`,
-					transformOrigin: `center calc(${size} / 2)`,
-					transform: `translateX(calc((${size} - ${diskSize}) / 2)) rotate(${i / disks}turn)`,
-					animation: `${period}s linear ${period * (i - disks) / disks}s infinite disk-loader`,
-				});
-
+				const disk = document.createElement(`div`);
+				disk.style.transform = `translateX(calc((${size} - ${diskSize}) / 2)) rotate(${i / disks}turn)`;
+				disk.style.animationDelay = `${period * (i - disks) / disks}s`;
+				this.diskElems.push(disk);
 				shadowRoot.appendChild(disk);
 			}
 		}
@@ -193,12 +195,67 @@
 			`spacing`,
 		];}
 
-		attributeChangedCallback(a) {
+		attributeChangedCallback(attr) {
 			if (this.isConnected) {
-				const {shadowRoot} = this;
-				let child;
-				while (child = shadowRoot.firstChild) child.remove();
-				this.connectedCallback();
+				const style = this.styleElem.sheet.rules[0].style;
+				let
+					diskElems,
+					disks,
+					diskSize,
+					size,
+					spacing;
+
+				switch (attr) {
+					case `color`:
+						style.background = this.color; break;
+					case `disks`:
+						const {shadowRoot} = this
+						let child;
+						while (child = shadowRoot.firstChild) child.remove();
+						this.connectedCallback(); break;
+					case `period`:
+						const {period} = this;
+						disks = this.disks;
+						style.animationDuration = period + `s`;
+						diskElems = this.diskElems;
+						for (let i = 0; i < diskElems.length; i++) {
+							diskElems[i].style.animationDelay = `${period * (i - disks) / disks}s`
+						} break;
+					case `size`:
+						const hostStyle = this.styleElem.sheet.rules[1].style;
+						disks = this.disks;
+						size = this.size;
+						spacing = this.spacing;
+						diskSize = `calc(${1 - spacing} * ${size} / ${1 - spacing + 1 / Math.sin(Math.PI / disks)})`;
+						hostStyle.width = size;
+						hostStyle.height = size;
+						Object.assign(style, {
+							width: diskSize,
+							height: diskSize,
+							borderRadius: `calc(${diskSize} / 2)`,
+							transformOrigin: `center calc(${size} / 2)`,
+						});
+
+						diskElems = this.diskElems;
+						for (let i = 0; i < diskElems.length; i++) {
+							diskElems[i].style.transform = `translateX(calc((${size} - ${diskSize}) / 2)) rotate(${i / disks}turn)`;
+						} break;
+					case `spacing`:
+						disks = this.disks;
+						size = this.size;
+						spacing = this.spacing;
+						diskSize = `calc(${1 - spacing} * ${size} / ${1 - spacing + 1 / Math.sin(Math.PI / disks)})`;
+						Object.assign(style, {
+							width: diskSize,
+							height: diskSize,
+							borderRadius: `calc(${diskSize} / 2)`
+						});
+
+						diskElems = this.diskElems
+						for (let i = 0; i < diskElems.length; i++) {
+							diskElems[i].style.transform = `translateX(calc((${size} - ${diskSize}) / 2)) rotate(${i / disks}turn)`;
+						} break;
+				}
 			}
 		}
 
