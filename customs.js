@@ -187,6 +187,14 @@
 			}
 		}
 
+		disconnectedCallback() {
+			const {shadowRoot} = this;
+			let child;
+			while (child = shadowRoot.firstChild) {
+				child.remove();
+			}
+		}
+
 		static get observedAttributes() {return [
 			`color`,
 			`disks`,
