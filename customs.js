@@ -54,9 +54,12 @@
 				},
 				content: {
 					get: ()=>{
-						let content = new Set;
-						for (let tabGroup of document.querySelectorAll(`tab-group[group='${this.group.name}']`)) {
-							for (let elem of tabGroup.querySelectorAll(`tab-content:not([group])`)) {
+						const
+							content = new Set,
+							tabGroupSelector = `tab-group[group='${this.group.name}']`;
+
+						for (let tabGroup of document.querySelectorAll(tabGroupSelector)) {
+							for (let elem of tabGroup.querySelectorAll(`${tabGroupSelector} > tab-content:not([group])`)) {
 								content.add(elem);
 							}
 						}
