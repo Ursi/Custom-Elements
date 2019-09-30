@@ -108,20 +108,34 @@
 			return content;
 		}
 
-		select() {
-			[`tabs`, `content`].forEach(tabType => {
-				for (let elem of this.group[tabType]) {
-					if (elem.selected) {
-						elem.selected = false;
-						if (tabType === `tabs`) break;
-					}
-				}
-			});
+		get disabled() {
+			return this.getAttribute(`disabled`) === `` ? true : false;
+		}
 
-			this.selected = true;
-			let content = this.contentElements;
-			if (content.length) {
-				for (let elem of content) elem.selected = true;
+		set disabled(bool) {
+			if (bool) {
+				this.setAttribute(`disabled`, ``);
+			} else {
+				this.removeAttribute(`disabled`);
+			}
+		}
+
+		select() {
+			if (!this.disabled) {
+				[`tabs`, `content`].forEach(tabType => {
+					for (let elem of this.group[tabType]) {
+						if (elem.selected) {
+							elem.selected = false;
+							if (tabType === `tabs`) break;
+						}
+					}
+				});
+
+				this.selected = true;
+				let content = this.contentElements;
+				if (content.length) {
+					for (let elem of content) elem.selected = true;
+				}
 			}
 		}
 	});
