@@ -1,6 +1,6 @@
 (()=>{
 	let style = document.createElement(`style`);
-	style.textContent = `/*for ${document.currentScript.getAttribute(`src`)}*/`;
+	style.textContent = `/*for ${document.currentScript.getAttribute(`src`)}*/`; // src !== getAttribute(`src`)
 	document.head.appendChild(style);
 	[`
 		tab-group {
