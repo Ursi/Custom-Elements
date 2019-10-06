@@ -16,6 +16,22 @@
 		}
 	`].forEach(rule => style.sheet.insertRule(rule));
 
+	const builtInEvents = new Set([`select`]);
+	function dispatchEvent(target, type, eventInitDict) {
+		const event = new Event(type, eventInitDict);
+		if (!builtInEvents.has(type)) {
+			const onevent = `on` + type;
+			let inline;
+			if (target[onevent]) target[onevent](event);
+			else if (inline = target.getAttribute(onevent)) {
+				eval(inline);
+			}
+		}
+
+		target.dispatchEvent(event);
+		return !event.defaultPrevented;
+	}
+
 	class TabElement extends HTMLElement {
 		get content() {
 			return this.getAttribute(`content`);
@@ -124,19 +140,24 @@
 
 		select() {
 			if (!this.disabled) {
-				[`tabs`, `content`].forEach(tabType => {
-					for (let elem of this.group[tabType]) {
-						if (elem.selected) {
-							elem.selected = false;
-							if (tabType === `tabs`) break;
+				if (dispatchEvent(this, `select`, {cancelable: true})) {
+					[`tabs`, `content`].forEach(tabType => {
+						for (let elem of this.group[tabType]) {
+							if (elem.selected) {
+								elem.selected = false;
+								if (tabType === `tabs`) {
+									dispatchEvent(elem, `unselect`);
+									break;
+								}
+							}
 						}
-					}
-				});
+					});
 
-				this.selected = true;
-				let content = this.contentElements;
-				if (content.length) {
-					for (let elem of content) elem.selected = true;
+					this.selected = true;
+					let content = this.contentElements;
+					if (content.length) {
+						for (let elem of content) elem.selected = true;
+					}
 				}
 			}
 		}
