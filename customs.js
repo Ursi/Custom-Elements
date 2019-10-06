@@ -92,8 +92,10 @@
 	customElements.define(`tab-select`, class extends TabElement {
 		constructor() {
 			super();
-			this.addEventListener(`click`, function(){
-				if (!this.selected) this.select();
+			this.addEventListener(`click`, function(e) {
+				setTimeout(()=>{
+					if (!this.selected && !e.defaultPrevented) this.select();
+				});
 			});
 		}
 
